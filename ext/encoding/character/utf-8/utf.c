@@ -17,7 +17,6 @@
 
 #include "unicode.h"
 #include "private.h"
-#include "str.h"
 
 
 #define UNICODE_ISVALID(char)				\
@@ -563,6 +562,114 @@ utf_collate_key_n(const char *str, size_t len)
 
 
 /* {{{1
+ * Retrieve the offset/index of ‘needle’ in ‘haystack’ which is of size
+ * ‘haystack_len’.
+ */
+static int
+str_index_n(const char *haystack, const char *needle, size_t haystack_len)
+{
+	assert(haystack != NULL);
+	assert(needle != NULL);
+
+	size_t needle_len = strlen(needle);
+
+	if (needle_len == 0)
+		return 0;
+
+	if (haystack_len < needle_len)
+		return -1;
+
+	const char *end = haystack + haystack_len - needle_len;
+	for (const char *p = haystack; *p != '\0' && p <= end; p++) {
+		size_t i;
+
+		for (i = 0; i < needle_len; i++) {
+			if (p[i] != needle[i])
+				break;
+		}
+
+		if (i == needle_len)
+			return p - haystack;
+	}
+
+	return -1;
+}
+
+
+/* {{{1
+ * Retrieve the index/offset of the right-most occurence of ‘needle’ in
+ * ‘haystack’, or -1 if it doesn't exist.
+ */
+static int
+str_rindex(const char *haystack, const char *needle)
+{
+	assert(haystack != NULL);
+	assert(needle != NULL);
+
+	size_t needle_len = strlen(needle);
+	size_t haystack_len = strlen(haystack);
+
+	if (needle_len == 0)
+		return haystack_len;
+
+	if (haystack_len < needle_len)
+		return -1;
+
+	for (const char *p = haystack + haystack_len - needle_len; p >= haystack; p--) {
+		size_t i;
+
+		for (i = 0; i < needle_len; i++) {
+			if (p[i] != needle[i])
+				break;
+		}
+
+		if (i == needle_len)
+			return p - haystack;
+	}
+
+	return -1;
+}
+
+
+/* {{{1
+ * Retrieve the index/offset of the right-most occurence of ‘needle’ in
+ * ‘haystack’, or -1 if it doesn't exist.
+ */
+static int
+str_rindex_n(const char *haystack, const char *needle, size_t haystack_len)
+{
+	assert(haystack != NULL);
+	assert(needle != NULL);
+
+	size_t needle_len = strlen(needle);
+	const char *haystack_max = haystack + haystack_len;
+	const char *p = haystack;
+
+	while (p < haystack_max && *p != '\0')
+		p++;
+
+	if (p < haystack + needle_len)
+		return -1;
+
+	p -= needle_len;
+
+	for ( ; p >= haystack; p--) {
+		size_t i;
+
+		for (i = 0; i < needle_len; i++) {
+			if (p[i] != needle[i])
+				break;
+		}
+
+		if (i == needle_len)
+			return p - haystack;
+	}
+
+	return -1;
+}
+
+
+/* {{{1
  * Retrieve the index of the left-most occurence of ‘c’ in ‘str’, or -1 if it
  * doesn't exist.
  */
@@ -588,7 +695,7 @@ utf_char_index_n(const char *str, unichar c, size_t len)
 
 	ch[unichar_to_utf(c, ch)] = NUL;
 
-	return strnstr(str, ch, len);
+	return str_index_n(str, ch, len);
 }
 
 
@@ -603,7 +710,7 @@ utf_char_rindex(const char *str, unichar c)
 
 	ch[unichar_to_utf(c, ch)] = NUL;
 
-	return strrstr(str, ch);
+	return str_rindex(str, ch);
 }
 
 
@@ -618,7 +725,7 @@ utf_char_rindex_n(const char *str, unichar c, size_t len)
 
 	ch[unichar_to_utf(c, ch)] = NUL;
 
-	return strrnstr(str, ch, len);
+	return str_rindex_n(str, ch, len);
 }
 
 
@@ -640,7 +747,7 @@ utf_index(const char *haystack, const char *needle)
 int
 utf_index_n(const char *haystack, const char *needle, size_t len)
 {
-	return strnstr(haystack, needle, len);
+	return str_index_n(haystack, needle, len);
 }
 
 
@@ -651,7 +758,7 @@ utf_index_n(const char *haystack, const char *needle, size_t len)
 int
 utf_rindex(const char *haystack, const char *needle)
 {
-	return strrstr(haystack, needle);
+	return str_rindex(haystack, needle);
 }
 
 
@@ -662,7 +769,7 @@ utf_rindex(const char *haystack, const char *needle)
 int
 utf_rindex_n(const char *haystack, const char *needle, size_t len)
 {
-	return strrnstr(haystack, needle, len);
+	return str_rindex_n(haystack, needle, len);
 }
 
 

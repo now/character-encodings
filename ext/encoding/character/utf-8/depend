@@ -58,6 +58,5 @@ rb_utf_tr.o: rb_utf_tr.c rb_includes.h unicode.h private.h rb_methods.h \
   rb_utf_internal_tr.h
 rb_utf_upcase.o: rb_utf_upcase.c rb_includes.h unicode.h private.h \
   rb_methods.h
-str.o: str.c str.h
 unicode.o: unicode.c unicode.h private.h rb_methods.h
-utf.o: utf.c unicode.h private.h str.h
+utf.o: utf.c unicode.h private.h
