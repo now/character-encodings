@@ -307,25 +307,25 @@ rb_cutf_to_inum(const char * const str, int base, bool verify)
 VALUE
 rb_utf_to_inum(VALUE str, int base, bool verify)
 {
-    StringValue(str);
+        StringValue(str);
 
-    char *s;
-    if (verify)
-	s = StringValueCStr(str);
-    else
-	s = RSTRING(str)->ptr;
+        char *s;
+        if (verify)
+                s = StringValueCStr(str);
+        else
+                s = RSTRING(str)->ptr;
 
-    if (s != NULL) {
-	long len = RSTRING(str)->len;
-        /* no sentinel somehow */
-	if (s[len] != '\0') {
-	    char *p = ALLOCA_N(char, len + 1);
+        if (s != NULL) {
+                long len = RSTRING(str)->len;
+                /* no sentinel somehow */
+                if (s[len] != '\0') {
+                        char *p = ALLOCA_N(char, len + 1);
 
-	    MEMCPY(p, s, char, len);
-	    p[len] = '\0';
-	    s = p;
-	}
-    }
+                        MEMCPY(p, s, char, len);
+                        p[len] = '\0';
+                        s = p;
+                }
+        }
 
-    return rb_cutf_to_inum(s, base, verify); 
+        return rb_cutf_to_inum(s, base, verify); 
 }
