@@ -25,6 +25,7 @@ Makefile = 'Makefile'
 ExtConf = 'extconf.rb'
 Depend = 'depend'
 TAGS = 'TAGS'
+CTags = 'exuberant-ctags'
 
 desc 'Build all C-based extensions'
 task :extensions
@@ -49,11 +50,9 @@ extensions.each do |extension|
       ruby ExtConf
       File.open(Makefile, 'a') do |f|
         f.puts <<EOF
-#{`#{Config.expand("$(CC) -c -I#{extension} -I#{Config::CONFIG['archdir']} -M -MT TAGS #{sources.join(' ')}")}`}
-
 TAGS:
 	@echo Running ‘ctags’ on source files…
-	@exuberant-ctags -f $@ -I UNUSED,HIDDEN $^
+	@#{CTags} -f $@ -I UNUSED,HIDDEN,_ $(SRCS)
 
 tags: TAGS
 
