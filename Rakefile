@@ -4,10 +4,11 @@
 
 require 'rake'
 require 'rake/rdoctask'
+require 'rake/gempackagetask'
 require 'spec/rake/spectask'
 
-PackageName = 'unicode'
-PackageVersion = '1.0.0'
+PackageName = 'character-encodings'
+PackageVersion = '0.1.0'
 
 desc 'Default task'
 task :default => [:extensions]
@@ -91,4 +92,40 @@ Rake::RDocTask.new do |rdoc|
   rdoc.options = ['--charset UTF-8']
   rdoc.rdoc_files.include('**/*.c')
   rdoc.rdoc_files.include('**/*.rb')
+end
+
+PackageFiles = %w(README Rakefile) +
+  Dir.glob("{lib,specification}/**/*") +
+  Dir.glob("ext/**/{*.{c,h,rb},depend}")
+
+spec =
+  Gem::Specification.new do |s|
+    s.name = PackageName
+    s.version = PackageVersion
+    s.platform = Gem::Platform::RUBY
+    s.has_rdoc = false
+    s.extra_rdoc_files = []
+    s.summary = 'A pluggable character-encoding library'
+    s.description = s.summary
+    s.author = 'Nikolai Weibull'
+    s.email = 'now@bitwi.se'
+    s.homepage = 'http://git.bitwi.se/?p=ruby-character-encodings.git;a=summary'
+    s.files = PackageFiles
+    s.require_path = "lib"
+    s.extensions = FileList["ext/**/extconf.rb"].to_a
+  end
+
+Rake::GemPackageTask.new(spec) do |p|
+  p.need_tar_gz = true
+  p.gem_spec = spec
+end
+
+desc 'Install the gem for this project'
+task :install => [:package] do
+  sh %{gem install pkg/#{PackageName}-#{PackageVersion}}
+end
+
+desc 'Uninstal the gem for this package'
+task :uninstall => [] do
+  sh %{gem uninstall #{PackageName}}
 end
