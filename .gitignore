@@ -1,0 +1,6 @@
+*.o
+*.so
+*.swp
+TAGS
+ext/encoding/character/utf-8/Makefile
+mkmf.log
