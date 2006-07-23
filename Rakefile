@@ -3,6 +3,7 @@
 # Copyright © 2006 Nikolai Weibull <now@bitwi.se>
 
 require 'rake'
+require 'rake/clean'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'spec/rake/spectask'
@@ -35,7 +36,13 @@ extensions.each do |extension|
 
   task :extensions => [makefile, so, tags]
 
-  sources = IO.read(makefile).grep(/^\s*SRCS/).first.sub(/^\s*SRCS\s*=\s*/, "").split(' ')
+  begin
+    sources = IO.read(makefile).grep(/^\s*SRCS/).first.sub(/^\s*SRCS\s*=\s*/, "").split(' ')
+  rescue
+    Dir.chdir(extension) do
+      sources = FileList['*.c'].to_a
+    end
+  end
 
   file makefile => [ExtConf, Depend].map{ |tail| File.join(extension, tail) } do
     Dir.chdir(extension) do
@@ -115,17 +122,23 @@ spec =
     s.extensions = FileList["ext/**/extconf.rb"].to_a
   end
 
+PackagesDirectory = 'packages'
+
 Rake::GemPackageTask.new(spec) do |p|
+  p.package_dir = PackagesDirectory
   p.need_tar_gz = true
   p.gem_spec = spec
 end
 
 desc 'Install the gem for this project'
 task :install => [:package] do
-  sh %{gem install pkg/#{PackageName}-#{PackageVersion}}
+  sh %{gem install #{PackagesDirectory}/#{PackageName}-#{PackageVersion}}
 end
 
-desc 'Uninstal the gem for this package'
+desc 'Uninstall the gem for this package'
 task :uninstall => [] do
   sh %{gem uninstall #{PackageName}}
 end
+
+CLEAN.include ["ext/**/{*.{o,so},#{TAGS}}"]
+CLOBBER.include ["ext/**/#{Makefile}"]
