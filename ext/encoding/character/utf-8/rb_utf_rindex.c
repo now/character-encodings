@@ -58,7 +58,7 @@ rb_utf_rindex_m(int argc, VALUE *argv, UNUSED(VALUE self))
                  * rb_utf_index_regexp_pointer() and rb_utf_rindex_pointer(),
                  * so that one can pass a pointer to start at immediately
                  * instead of an offset that gets calculated into a pointer. */
-                offset = utf_length(RSTRING(str)->ptr);
+                offset = utf_length_n(RSTRING(str)->ptr, RSTRING(str)->len);
         }
 
         switch (TYPE(sub)) {

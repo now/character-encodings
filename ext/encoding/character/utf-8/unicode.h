@@ -186,7 +186,7 @@ int utf_rindex(const char *haystack, const char *needle);
 int utf_rindex_n(const char *haystack, const char *needle, size_t len);
 bool utf_has_prefix(const char *str, const char *prefix);
 long utf_length(const char *str);
-long utf_length_n(const char *str, size_t len);
+long utf_length_n(const char *str, long len);
 size_t utf_width(const char *str);
 size_t utf_width_n(const char *str, size_t len);
 size_t utf_byte_length(const char *str);

@@ -62,10 +62,10 @@ rb_utf_aref_num(VALUE str, long offset)
 static VALUE
 rb_utf_aref_default(VALUE str, VALUE index)
 {
-        long begin, len;
+        long n_chars = utf_length_n(RSTRING(str)->ptr, RSTRING(str)->len);
 
-        switch (rb_range_beg_len(index, &begin, &len,
-                                 utf_length(RSTRING(str)->ptr), 0)) {
+        long begin, len;
+        switch (rb_range_beg_len(index, &begin, &len, n_chars, 0)) {
         case Qfalse:
                 return rb_utf_aref_num(str, NUM2LONG(index));
         case Qnil:

@@ -37,14 +37,14 @@ rb_utf_justify(int argc, VALUE *argv, char jflag)
         if (rb_scan_args(argc, argv, "21", &str, &w, &pad) == 3) {
                 StringValue(pad);
                 f = RSTRING(pad)->ptr;
-                f_len = utf_length(f);
+                f_len = utf_length_n(f, RSTRING(pad)->len);
                 if (f_len == 0)
                         rb_raise(rb_eArgError, "zero width padding");
                 f_size = RSTRING(pad)->len;
                 infect_from_pad = true;
         }
 
-        long len = utf_length(RSTRING(str)->ptr);
+        long len = utf_length_n(RSTRING(str)->ptr, RSTRING(str)->len);
 
         long width = NUM2LONG(w);
         if (width < 0 || len >= width)

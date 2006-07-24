@@ -6,6 +6,7 @@
 
 #include "rb_includes.h"
 
+/* TODO: Update to use new offset-calculating functions. */
 VALUE
 rb_utf_insert(UNUSED(VALUE self), VALUE str, VALUE index, VALUE other)
 {
@@ -13,11 +14,11 @@ rb_utf_insert(UNUSED(VALUE self), VALUE str, VALUE index, VALUE other)
 
         StringValue(str);
 
-        long u_len = utf_length(RSTRING(str)->ptr);
+        long n_chars = utf_length_n(RSTRING(str)->ptr, RSTRING(str)->len);
 
-        if (abs(offset) > u_len) {
+        if (abs(offset) > n_chars) {
                 if (offset < 0)
-                        offset -= u_len;
+                        offset -= n_chars;
                 rb_raise(rb_eIndexError, "index %ld out of string", offset);
         }
 

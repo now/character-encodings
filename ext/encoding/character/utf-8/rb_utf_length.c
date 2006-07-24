@@ -9,5 +9,6 @@
 VALUE
 rb_utf_length(UNUSED(VALUE self), VALUE str)
 {
-        return UINT2NUM(utf_length(StringValuePtr(str)));
+        StringValue(str);
+        return UINT2NUM(utf_length_n(RSTRING(str)->ptr, RSTRING(str)->len));
 }

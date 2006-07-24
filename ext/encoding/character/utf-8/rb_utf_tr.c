@@ -223,11 +223,11 @@ tr_trans(VALUE str, VALUE from, VALUE to, bool squeeze, bool replace_content)
                  * include it or not. */
                 struct tr_trans_closure trans_closure;
 
-                struct tr_range from_ranges[utf_length(RSTRING(from)->ptr)];
+                struct tr_range from_ranges[utf_length_n(RSTRING(from)->ptr, RSTRING(from)->len)];
                 trans_closure.from = from_ranges;
                 trans_closure.n_from = tr_ranges_setup(&tr_from, from_ranges);
 
-                struct tr_range to_ranges[utf_length(RSTRING(to)->ptr)];
+                struct tr_range to_ranges[utf_length_n(RSTRING(to)->ptr, RSTRING(to)->len)];
                 trans_closure.to = to_ranges;
                 trans_closure.n_to = tr_ranges_setup(&tr_to, to_ranges);
 

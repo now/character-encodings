@@ -794,56 +794,50 @@ utf_has_prefix(const char *str, const char *prefix)
 
 
 /* {{{1
- * The real implementation of utf_length() and utf_length_n() below.
- */
-static long
-utf_length_impl(const char *str, size_t len, bool use_len)
-{
-	assert(str != NULL || (use_len && len == 0));
-
-	size_t n = 0;
-	const char *p = str;
-	if (use_len) {
-		if (len == 0 || *p == NUL)
-			return 0;
-
-		p = utf_next(p);
-		while ((unsigned)(p - str) < len && *p != NUL) {
-			n++;
-			p = utf_next(p);
-		}
-
-		if ((unsigned)(p - str) <= len)
-			n++;
-	} else {
-		while (*p != NUL) {
-			n++;
-			p = utf_next(p);
-		}
-	}
-
-	return n;
-}
-
-
-/* {{{1
  * Retrieve the number of UTF-8 encoded Unicode characters in ‘str’.
  */
 long
 utf_length(const char *str)
 {
-	return utf_length_impl(str, 0, false);
+        assert(str != NULL);
+
+        long n = 0;
+        const char *p = str;
+        while (*p != '\0') {
+                n++;
+                p = utf_next(p);
+        }
+
+        return n;
 }
 
 
 /* {{{1
  * Retrieve the number of UTF-8 encoded Unicode characters in ‘str’, examining
- * at most ‘len’ bytes.
+ * ‘len’ bytes.
  */
 long
-utf_length_n(const char *str, size_t len)
+utf_length_n(const char *str, long len)
 {
-	return utf_length_impl(str, len, true);
+        assert(str != NULL || len == 0);
+
+        if (len == 0)
+                return 0;
+
+        long n = 0;
+        const char *p = str;
+        const char *end = str + len;
+        while (p < end) {
+                n++;
+                p = utf_next(p);
+        }
+
+        /* This makes sure that we don’t count incomplete characters.  It won’t
+         * save us from illegal UTF-8-sequences, however. */
+        if (p > end)
+                n--;
+
+        return n;
 }
 
 

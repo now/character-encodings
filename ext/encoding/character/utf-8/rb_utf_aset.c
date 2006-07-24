@@ -52,9 +52,10 @@ rb_utf_aset_num(VALUE str, long offset, VALUE replacement)
 static VALUE
 rb_utf_aset_default(VALUE str, VALUE index, VALUE replacement)
 {
-        long begin, len;
+        long n_chars = utf_length_n(RSTRING(str)->ptr, RSTRING(str)->len);
 
-        if (rb_range_beg_len(index, &begin, &len, utf_length(RSTRING(str)->ptr), 2))
+        long begin, len;
+        if (rb_range_beg_len(index, &begin, &len, n_chars, 2))
                 return rb_utf_update(str, begin, len, replacement);
 
         return rb_utf_aset_num(str, NUM2LONG(index), replacement);
@@ -76,7 +77,8 @@ rb_utf_aset(VALUE str, VALUE index, VALUE replacement)
                         rb_raise(rb_eIndexError, "string not matched");
                 return rb_utf_update(str,
                                      begin,
-                                     utf_length(RSTRING(index)->ptr),
+                                     utf_length_n(RSTRING(index)->ptr,
+                                                  RSTRING(index)->len),
                                      replacement);
         }
         default:

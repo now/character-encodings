@@ -232,16 +232,16 @@ rb_utf_dup(VALUE str)
 long
 rb_utf_index(VALUE str, VALUE sub, long offset)
 {
-        long u_len = utf_length(RSTRING(str)->ptr);
+        long n_chars = utf_length_n(RSTRING(str)->ptr, RSTRING(str)->len);
 
         if (offset < 0) {
-                offset += u_len;
+                offset += n_chars;
 
                 if (offset < 0)
                         return -1;
         }
 
-        if (u_len - offset < utf_length(RSTRING(sub)->ptr))
+        if (n_chars - offset < utf_length(RSTRING(sub)->ptr))
                 return -1;
 
         if (RSTRING(sub)->len == 0)
