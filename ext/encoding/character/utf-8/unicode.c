@@ -15,14 +15,12 @@
 #include "private.h"
 #include "rb_methods.h"
 
-void Init_utf8(void);
-
 static VALUE mUTF8Methods;
 
 void
 need_at_least_n_arguments(int argc, int n)
 {
-        static const char *words[] = {
+        static const char *const words[] = {
                 NULL,   NULL, "two",   "three", "four",
                 "five", "six", "seven", "eight", "nine"
         };
@@ -269,6 +267,7 @@ rb_utf_index_regexp(VALUE str, const char *s, const char *end, VALUE sub,
         return utf_pointer_to_offset(s, s + byte_index);
 }
 
+void Init_utf8(void);
 void
 Init_utf8(void)
 {
