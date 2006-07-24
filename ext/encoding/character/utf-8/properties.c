@@ -365,7 +365,7 @@ special_case_table_lookup(unichar c)
 
         if (tv >= UNICODE_SPECIAL_CASE_TABLE_START)
                 return utf_char(special_case_table +
-                                tv -UNICODE_SPECIAL_CASE_TABLE_START);
+                                tv - UNICODE_SPECIAL_CASE_TABLE_START);
 
         if (tv == '\0')
                 return c;
@@ -607,12 +607,10 @@ real_do_toupper(unichar c, int type, char *buf)
         /* TODO: this should really use titlecase_table_lookup somehow. */
         if (type == UNICODE_TITLECASE_LETTER)
                 for (size_t i = 0; i < lengthof(title_table); i++)
-                        if (title_table[i][0] == c) {
-                                tv = title_table[i][1];
-                                break;
-                        }
+                        if (title_table[i][0] == c)
+                                return unichar_to_utf(title_table[i][1], buf);
 
-        return unichar_to_utf(tv, buf);
+        return unichar_to_utf(tv != '\0' ? tv : c, buf); 
 }
 
 /* {{{1
@@ -689,7 +687,7 @@ utf_upcase_impl(const char *str, size_t max, bool use_max)
 	size_t len = real_toupper(str, max, use_max, NULL, locale_type);
 	char *result = ALLOC_N(char, len + 1);
 	real_toupper(str, max, use_max, result, locale_type);
-	result[len] = NUL;
+	result[len] = '\0';
 
 	return result;
 }
@@ -751,12 +749,10 @@ real_do_tolower(unichar c, int type, char *buf)
         /* TODO: this should really use titlecase_table_lookup somehow. */
         if (type == UNICODE_TITLECASE_LETTER)
                 for (size_t i = 0; i < lengthof(title_table); i++)
-                        if (title_table[i][0] == c) {
-                                tv = title_table[i][2];
-                                break;
-                        }
+                        if (title_table[i][0] == c)
+                                return unichar_to_utf(title_table[i][2], buf);
 
-        return unichar_to_utf(tv, buf);
+        return unichar_to_utf(tv != '\0' ? tv : c, buf);
 }
 
 /* {{{1
