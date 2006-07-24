@@ -563,11 +563,15 @@ remove_all_combining_dot_above(unichar c, char *buf)
         size_t decomp_len;
         unichar *decomp = unicode_canonical_decomposition(c, &decomp_len);
 
+        size_t len = 0;
         for (size_t i = 0; i < decomp_len; i++)
                 if (decomp[i] != COMBINING_DOT_ABOVE)
-                        return unichar_to_utf(unichar_toupper(decomp[i]), buf);
+                        len += unichar_to_utf(unichar_toupper(decomp[i]),
+                                              OFFSET_IF(buf, len));
 
         free(decomp);
+
+        return len;
 }
 
 static size_t
