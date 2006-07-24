@@ -2,7 +2,7 @@
 #
 # Copyright © 2006 Nikolai Weibull <now@bitwi.se>
 
-require 'encoding/character/utf-8/utf8.so'
+require 'encoding/character/utf-8/utf8'
 
 # TODO: Rework this to use a dispatch object instead, so that the encoding can
 # be changed on the fly.
