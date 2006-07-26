@@ -86,8 +86,9 @@ tr_trans_replace_include(unichar c, void *v_closure)
 }
 
 static VALUE
-tr_trans_do(VALUE src, int *translation, unichar (*replace)(unichar, void *),
-            void *closure, bool squeeze, UNUSED(bool replace_content))
+tr_trans_do(VALUE src, unsigned int *translation,
+            unichar (*replace)(unichar, void *), void *closure, bool squeeze,
+            UNUSED(bool replace_content))
 {
         VALUE dst = Qnil;
         long len;

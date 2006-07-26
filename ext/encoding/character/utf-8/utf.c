@@ -90,7 +90,7 @@ static const uint8_t s_utf_skip_length_data[256] = {
 };
 
 
-const char * const s_utf_skip_lengths = s_utf_skip_length_data;
+const char * const s_utf_skip_lengths = (const char *)s_utf_skip_length_data;
 
 
 
