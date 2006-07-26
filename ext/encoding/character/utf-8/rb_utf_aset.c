@@ -98,7 +98,7 @@ rb_utf_aset_m(int argc, VALUE *argv, UNUSED(VALUE self))
         if (argc == 3)
                 return rb_utf_aset(argv[0], argv[1], argv[2]);
 
-        if (TYPE(argv[1] == T_REGEXP))
+        if (TYPE(argv[1]) == T_REGEXP)
                 return rb_str_subpat_set(argv[0], argv[1], NUM2INT(argv[2]), argv[3]);
 
         return rb_utf_update(argv[0], NUM2LONG(argv[1]), NUM2LONG(argv[2]), argv[3]);
