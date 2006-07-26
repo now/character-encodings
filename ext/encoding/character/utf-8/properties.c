@@ -575,7 +575,7 @@ remove_all_combining_dot_above(unichar c, char *buf)
 }
 
 static size_t
-real_toupper_lithuanian(const char *p, unichar c, int type, char *buf,
+real_toupper_lithuanian(const char **p, unichar c, int type, char *buf,
                         bool *was_i)
 {
 	if (c == 'i') {
@@ -585,7 +585,7 @@ real_toupper_lithuanian(const char *p, unichar c, int type, char *buf,
 
 	if (*was_i) {
                 size_t len = remove_all_combining_dot_above(c, buf);
-		return len + output_marks(&p, (buf != NULL) ? buf + len : NULL,
+		return len + output_marks(p, (buf != NULL) ? buf + len : NULL,
                                           true);
 	}
 
@@ -628,7 +628,7 @@ real_toupper_one(const char **p, const char *prev, char *buf,
         int type = s_type(c);
 
         if (locale_type == LOCALE_LITHUANIAN) {
-                size_t len = real_toupper_lithuanian(*p, c, type, buf, was_i);
+                size_t len = real_toupper_lithuanian(p, c, type, buf, was_i);
                 if (len > 0)
                         return len;
         }
