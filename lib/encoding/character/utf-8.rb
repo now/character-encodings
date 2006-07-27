@@ -95,6 +95,10 @@ module Encoding::Character::UTF8::Methods
     Encoding::Character::UTF8.lstrip!(self)
   end
 
+  def normalize(*args)
+    Encoding::Character::UTF8.normalize(self, *args)
+  end
+
   def rindex(*args)
     Encoding::Character::UTF8.rindex(self, *args)
   end

@@ -6,6 +6,7 @@ require 'rake'
 require 'rake/clean'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
+require 'rake/testtask'
 require 'spec/rake/spectask'
 
 PackageName = 'character-encodings'
@@ -90,6 +91,18 @@ Spec::Rake::SpecTask.new do |t|
   t.spec_files = FileList['specifications/*.rb']
 end
 
+Tests = [
+  ['tests/foldcase.rb'],
+  ['tests/normalize.rb']
+]
+
+Rake::TestTask.new do |t|
+  level = ENV['level'] ? Integer(ENV['level']) : 0
+  t.test_files = Tests[0..level].flatten
+  t.libs = ['lib', 'ext']
+  t.verbose = true
+end
+
 RDocDir = 'api'
 
 Rake::RDocTask.new do |rdoc|
@@ -102,7 +115,8 @@ end
 
 PackageFiles = %w(README Rakefile) +
   Dir.glob("{lib,specification}/**/*") +
-  Dir.glob("ext/**/{*.{c,h,rb},depend}")
+  Dir.glob("ext/**/{*.{c,h,rb},depend}") +
+  Dir.glob("tests/*.rb")
 
 spec =
   Gem::Specification.new do |s|

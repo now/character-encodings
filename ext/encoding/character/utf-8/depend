@@ -40,6 +40,8 @@ rb_utf_length.o: rb_utf_length.c rb_includes.h unicode.h private.h \
   rb_methods.h
 rb_utf_lstrip.o: rb_utf_lstrip.c rb_includes.h unicode.h private.h \
   rb_methods.h
+rb_utf_normalize.o: rb_utf_normalize.c rb_includes.h unicode.h private.h \
+  rb_methods.h
 rb_utf_oct.o: rb_utf_oct.c rb_includes.h unicode.h private.h rb_methods.h \
   rb_utf_internal_bignum.h
 rb_utf_reverse.o: rb_utf_reverse.c rb_includes.h unicode.h private.h \

@@ -44,5 +44,6 @@ VALUE rb_utf_oct(UNUSED(VALUE self), VALUE str) HIDDEN;
 VALUE rb_utf_tr(UNUSED(VALUE self), VALUE str, VALUE from, VALUE to) HIDDEN;
 VALUE rb_utf_tr_s(UNUSED(VALUE self), VALUE str, VALUE from, VALUE to) HIDDEN;
 VALUE rb_utf_foldcase(UNUSED(VALUE self), VALUE str) HIDDEN;
+VALUE rb_utf_normalize(int argc, VALUE *argv, UNUSED(VALUE self)) HIDDEN;
 
 #endif /* RB_METHODS_H */

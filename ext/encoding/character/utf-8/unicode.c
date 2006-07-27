@@ -315,4 +315,5 @@ Init_utf8(void)
         rb_define_module_function(mUTF8, "upcase", rb_utf_upcase, 1);
 
         rb_define_module_function(mUTF8, "foldcase", rb_utf_foldcase, 1);
+        rb_define_module_function(mUTF8, "normalize", rb_utf_normalize, -1);
 }
