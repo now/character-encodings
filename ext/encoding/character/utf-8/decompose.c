@@ -71,19 +71,19 @@ _unichar_combining_class(unichar c)
  * their combining class.  Do this for at most ‘len’ bytes of data.
  */
 static bool
-unicode_canonical_ordering_swap(unichar *str, size_t offset, int next)
+unicode_canonical_ordering_swap(unichar *str, size_t offset, int next, bool *swapped)
 {
         size_t initial = offset + 1;
 
         size_t j = initial;
-        while (j > 0 && COMBINING_CLASS(str[j - 1]) <= next) {
+        while (j > 0 && COMBINING_CLASS(str[j - 1]) > next) {
                 unichar c = str[j];
                 str[j] = str[j - 1];
                 str[j - 1] = c;
                 j--;
         }
 
-        return j != initial;
+        *swapped = *swapped || (j != initial);
 }
 
 static bool
@@ -96,7 +96,7 @@ unicode_canonical_ordering_reorder(unichar *str, size_t len)
                 int next = COMBINING_CLASS(str[i + 1]);
 
                 if (next != 0 && prev > next)
-                        swapped = unicode_canonical_ordering_swap(str, i, next);
+                        unicode_canonical_ordering_swap(str, i, next, &swapped);
                 else
                         prev = next;
         }
@@ -420,7 +420,7 @@ _utf_normalize_wc(const char *str, size_t max_len, bool use_len, NormalizeMode m
         for (size_t i = 0; i < n; i++) {
                 int cc = COMBINING_CLASS(buf[i]);
 
-                if (i > 0 && (prev_cc == 0 || prev_cc != cc) &&
+                if (i > 0 && (prev_cc == 0 || prev_cc < cc) &&
                     combine(buf[prev_start], buf[i], &buf[prev_start])) {
                         for (size_t j = i + 1; j < n; j++)
                                 buf[j - 1] = buf[j];
