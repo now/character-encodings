@@ -524,7 +524,7 @@ private
 #ifndef #{header_h}
 #define #{header_h}
 
-#define UNICODE_DATA_VERSION "4.0.1"
+#define UNICODE_DATA_VERSION "#{UnicodeVersion}"
 
 #define UNICODE_LAST_CHAR #{sprintf('0x%04x', data.last)}
 
@@ -991,7 +991,7 @@ EOL
 #ifndef #{header_h}
 #define #{header_h}
 
-#define UNICODE_DATA_VERSION "4.0.1"
+#define UNICODE_DATA_VERSION "#{UnicodeVersion}"
 
 #define UNICODE_LAST_CHAR #{sprintf('0x%04x', data.last)}
 
@@ -1034,10 +1034,12 @@ EOF
   end
 end
 
+UnicodeVersion = ARGV[0]
+
 class Runner
   def main
-    check_for_data_files('/home/now')
-    data = CollectedData.new('/home/now', "\t")
+    check_for_data_files(ARGV[1])
+    data = CollectedData.new(ARGV[1], "\t")
     [CompositionExclusions, UnicodeData, LineBreak,
       SpecialCasing, CaseFolding, BidiMirroring, Printer].each do |klass|
       klass.new.process(data)
