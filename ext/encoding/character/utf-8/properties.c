@@ -600,7 +600,7 @@ real_toupper_lithuanian(const char **p, unichar c, int type, char *buf,
 static inline size_t
 real_do_toupper(unichar c, int type, char *buf)
 {
-	bool upper = (type == UNICODE_LOWERCASE_LETTER);
+	bool upper = (type != UNICODE_LOWERCASE_LETTER);
 	unichar tv = ATTTABLE(c >> 8, c & 0xff);
 
 	if (tv >= UNICODE_SPECIAL_CASE_TABLE_START)
