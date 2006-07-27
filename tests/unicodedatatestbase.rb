@@ -8,7 +8,12 @@ module UnicodeDataTestBase
   UnidataBase = 'http://www.unicode.org/Public/UNIDATA/'
 
   def open_data_file(file, &block)
-    path = File.join(File.dirname(__FILE__), 'data', file)
+    dir = File.join(File.dirname(__FILE__), 'data')
+    begin
+      Dir.mkdir(dir)
+    rescue Errno::EEXIST
+    end
+    path = File.join(dir, file)
     begin
       File.open(path, &block)
     rescue Errno::ENOENT
