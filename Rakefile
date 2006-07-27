@@ -10,7 +10,7 @@ require 'rake/testtask'
 require 'spec/rake/spectask'
 
 PackageName = 'character-encodings'
-PackageVersion = '0.1.0'
+PackageVersion = '0.2.0'
 
 desc 'Default task'
 task :default => [:extensions]
@@ -114,7 +114,7 @@ Rake::RDocTask.new do |rdoc|
 end
 
 PackageFiles = %w(README Rakefile) +
-  Dir.glob("{lib,specification}/**/*") +
+  Dir.glob("{lib,specifications}/**/*") +
   Dir.glob("ext/**/{*.{c,h,rb},depend}") +
   Dir.glob("tests/*.rb")
 
