@@ -70,7 +70,7 @@ _unichar_combining_class(unichar c)
  * Rearrange ‘str’ so that decomposed characters are arranged according to
  * their combining class.  Do this for at most ‘len’ bytes of data.
  */
-static bool
+static void
 unicode_canonical_ordering_swap(unichar *str, size_t offset, int next, bool *swapped)
 {
         size_t initial = offset + 1;
