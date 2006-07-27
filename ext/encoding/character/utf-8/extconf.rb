@@ -13,7 +13,7 @@ end
 
 try_compiler_option('-std=c99')
 try_compiler_option('-Wall')
-try_compiler_option('-W')
+try_compiler_option('-Wextra')
 try_compiler_option('-Wwrite-strings')
 try_compiler_option('-Waggregate-return')
 try_compiler_option('-Wmissing-prototypes')
@@ -26,7 +26,8 @@ try_compiler_option('-Werror')
 # XXX: sadly, -Wshadow is a bit too strict.  It will, for example, whine about
 # local variables called “index” on FreeBSD.
 # try_compiler_option('-Wshadow')
-try_compiler_option('-Wconverison')
+# XXX: This is also too strict.
+# try_compiler_option('-Wconversion')
 
 have_header('assert.h')
 have_header('limits.h')
@@ -42,6 +43,5 @@ have_header('wchar.h')
 
 $INSTALLFILES ||= []
 $INSTALLFILES << ['unicode.h', '$(RUBYARCHDIR)', 'lib']
-#$INSTALLFILES << ['unicode.rb', '$(RUBYARCHDIR)', 'lib']
 
 create_makefile('encoding/character/utf-8/utf8')
