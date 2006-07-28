@@ -403,6 +403,36 @@ normalize_wc_decompose(const char *str, size_t max_len, bool use_len,
         *buf_len = n;
 }
 
+static unichar *
+normalize_wc_compose(unichar *buf, size_t len)
+{
+        int new_len = len;
+        size_t prev_start = 0;
+        int prev_cc = 0;
+
+        for (size_t i = 0; i < len; i++) {
+                int cc = COMBINING_CLASS(buf[i]);
+                size_t j = i - (len - new_len);
+
+                if (j > 0 && (prev_cc == 0 || prev_cc < cc) &&
+                    combine(buf[prev_start], buf[i], &buf[prev_start])) {
+                        new_len--;
+                        prev_cc = (j + 1 == prev_start) ?
+                                  0 : COMBINING_CLASS(buf[j - 1]);
+                } else {
+                        if (cc == 0)
+                                prev_start = j;
+
+                        buf[j] = buf[i];
+                        prev_cc = cc;
+                }
+        }
+
+        buf[new_len] = NUL;
+
+        return buf;
+}
+
 unichar *
 _utf_normalize_wc(const char *str, size_t max_len, bool use_len, NormalizeMode mode)
 {
@@ -415,30 +445,7 @@ _utf_normalize_wc(const char *str, size_t max_len, bool use_len, NormalizeMode m
         if (!(mode == NORMALIZE_NFC || mode == NORMALIZE_NFKC))
                 return buf;
 
-        size_t prev_start = 0;
-        int prev_cc = 0;
-        for (size_t i = 0; i < n; i++) {
-                int cc = COMBINING_CLASS(buf[i]);
-
-                if (i > 0 && (prev_cc == 0 || prev_cc < cc) &&
-                    combine(buf[prev_start], buf[i], &buf[prev_start])) {
-                        for (size_t j = i + 1; j < n; j++)
-                                buf[j - 1] = buf[j];
-
-                        n--;
-                        i--;
-                        prev_cc = (i == prev_start) ? 0 : COMBINING_CLASS(buf[i - 1]);
-                } else {
-                        if (cc == 0)
-                                prev_start = i;
-
-                        prev_cc = cc;
-                }
-        }
-
-        buf[n] = NUL;
-
-        return buf;
+        return normalize_wc_compose(buf, n);
 }
 
 
