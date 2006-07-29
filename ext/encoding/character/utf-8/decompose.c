@@ -203,6 +203,21 @@ find_decomposition(unichar c, bool compat)
 
 
 /* {{{1
+ * Copy over the UTF-8 decomposition in ‘decomposition’ to the unichar buffer
+ * ‘chars’.  Return the number of unichars in ‘chars’.
+ */
+static size_t
+decomposition_to_wc(const char *decomposition, unichar *chars)
+{
+        size_t i = 0;
+        for (const char *p = decomposition; *p != '\0'; p = utf_next(p))
+                chars[i++] = utf_char(p);
+
+        return i;
+}
+
+
+/* {{{1
  * Generate the canonical decomposition of ‘c’.  The length of the
  * decomposition is stored in ‘len’.
  */
@@ -221,11 +236,7 @@ unicode_canonical_decomposition(unichar c, size_t *len)
         } else if ((decomp = find_decomposition(c, false)) != NULL) {
                 *len = utf_length(decomp);
                 r = ALLOC_N(unichar, *len);
-
-                int i;
-                const char *p;
-                for (p = decomp, i = 0; *p != NUL; p = utf_next(p), i++)
-                        r[i] = utf_char(p);
+                decomposition_to_wc(decomp, r);
         } else {
                 r = ALLOC(unichar);
                 *r = c;
@@ -356,12 +367,8 @@ normalize_wc_decompose_one(unichar c, NormalizeMode mode, unichar *buf)
                 return 1;
         }
 
-        if (buf != NULL) {
-                int i;
-                for (i = 0; *decomp != NUL; decomp = utf_next(decomp), i++)
-                        buf[i] = utf_char(decomp);
-                return i;
-        }
+        if (buf != NULL)
+                return decomposition_to_wc(decomp, buf);
 
         return utf_length(decomp);
 }
