@@ -32,7 +32,7 @@ unichar_break_type(unichar c)
 
         if (c >= UNICODE_FIRST_CHAR_PART2 && c <= UNICODE_LAST_CHAR)
                 return break_type(break_property_table_part2,
-                                  (c - 0xe0000) >> 8, c);
+                                  (c - UNICODE_FIRST_CHAR_PART2) >> 8, c);
 
         return UNICODE_BREAK_UNKNOWN;
 }

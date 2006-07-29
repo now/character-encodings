@@ -63,8 +63,8 @@ s_type(unichar c)
 	if (c <= UNICODE_LAST_CHAR_PART1) {
 		page = c >> 8;
 		table = type_table_part1;
-	} else if (c >= 0xe0000 && c <= UNICODE_LAST_CHAR) {
-		page = (c - 0xe0000) >> 8;
+	} else if (c >= UNICODE_FIRST_CHAR_PART2 && c <= UNICODE_LAST_CHAR) {
+		page = (c - UNICODE_FIRST_CHAR_PART2) >> 8;
 		table = type_table_part2;
 	} else {
 		return UNICODE_UNASSIGNED;

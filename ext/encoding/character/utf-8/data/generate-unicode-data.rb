@@ -534,6 +534,8 @@ private
 
 #define UNICODE_LAST_PAGE_PART1 #{data.pages_before_e0000 - 1}
 
+#define UNICODE_FIRST_CHAR_PART2 0xe0000
+
 #define UNICODE_SPECIAL_CASE_TABLE_START 0x1000000
 EOF
       print_table(data, 0, @last_char_part1_i, data.last, 1,
