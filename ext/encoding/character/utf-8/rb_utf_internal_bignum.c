@@ -113,7 +113,8 @@ rb_utf_to_inum_num_separator(const char *str, const char *s, bool verify,
 
         if (*non_digit != 0)
                 rb_raise(rb_eArgError,
-                         "unexpected ‘%lc’ found at position %ld", c, s - str);
+                         "unexpected ‘%lc’ found at position %ld",
+                         c, utf_pointer_to_offset(str, s));
 
         *non_digit = c;
 
@@ -135,7 +136,7 @@ rb_utf_to_inum_digit_value(const char *str, const char *s, unichar c,
                         return false;
                 rb_raise(rb_eArgError,
                          "non-digit character ‘%lc’ found at position %ld",
-                         c, s - str);
+                         c, utf_pointer_to_offset(str, s));
         }
 
         if (value >= base) {
@@ -144,7 +145,7 @@ rb_utf_to_inum_digit_value(const char *str, const char *s, unichar c,
 
                 rb_raise(rb_eArgError,
                          "value (%d) greater than base (%d) at position %ld",
-                         value, base, s - str);
+                         value, base, utf_pointer_to_offset(str, s));
         }
 
         *digit_value = value;
@@ -181,7 +182,7 @@ rb_utf_to_inum_as_fix(const char *str, const char *s, int sign, int base,
                 if (*s != '\0')
                         rb_raise(rb_eArgError,
                                  "trailing garbage found at position %ld",
-                                 s - str);
+                                 utf_pointer_to_offset(str, s));
         }
 
         if (POSFIXABLE(value)) {
@@ -221,7 +222,7 @@ rb_cutf_to_inum(const char * const str, int base, bool verify)
                 if (verify)
                         rb_raise(rb_eArgError,
                                  "extra sign ‘%c’ found at position %ld",
-                                 *s, s - str);
+                                 *s, utf_pointer_to_offset(str, s));
                 return INT2FIX(0);
         }
 
@@ -245,7 +246,7 @@ rb_cutf_to_inum(const char * const str, int base, bool verify)
         if (verify && *str == '_')
                 rb_raise(rb_eArgError,
                          "leading digit-separator ‘_’ found at position %ld",
-                         s - str);
+                         utf_pointer_to_offset(str, s));
 
         bit_length = bit_length / BITSPERDIG + 1;
 
@@ -294,12 +295,12 @@ rb_cutf_to_inum(const char * const str, int base, bool verify)
         if (str + 1 < s && s[-1] == '_')
                 rb_raise(rb_eArgError,
                          "trailing digit-separator ‘_’ found at position %ld",
-                         s - str);
+                         utf_pointer_to_offset(str, s));
 
         if (*s != '\0')
                 rb_raise(rb_eArgError,
                          "trailing garbage found at position %ld",
-                         s - str);
+                         utf_pointer_to_offset(str, s));
 
         return rb_big_norm(z);
 }
