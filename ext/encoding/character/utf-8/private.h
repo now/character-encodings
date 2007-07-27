@@ -21,6 +21,14 @@
 #  define HIDDEN(u)
 #endif
 
+#define binary_search_middle_of(begin, end)     \
+        (((unsigned)((begin) + (end))) >> 1)
+
+#define unicode_table_lookup(table, c, index)    \
+        binary_search_unicode_table(table, lengthof(table), sizeof((table)[0]), sizeof((table)[0].ch), c, index)
+
+bool binary_search_unicode_table(const void *table, size_t n, size_t sizeof_entry, size_t sizeof_char, unichar c, int *index) HIDDEN;
+
 unichar *_utf_normalize_wc(const char *str, size_t max_len, bool use_len,
                            NormalizeMode mode) HIDDEN;
 int _unichar_combining_class(unichar c) HIDDEN;

@@ -914,28 +914,19 @@ utf_downcase_n(const char *str, size_t len)
 static bool
 casefold_table_lookup(unichar c, char *folded, size_t *len)
 {
-        int begin = 0;
-        int end = lengthof(casefold_table);
+        int index;
 
-        if (c < casefold_table[begin].ch || c > casefold_table[end - 1].ch)
+        if (!unicode_table_lookup(casefold_table, c, &index))
                 return false;
 
-        while (true) {
-                int mid = (begin + end) / 2;
+        char const *folded_c = casefold_table[index].data;
 
-                if (c == casefold_table[mid].ch) {
-                        if (folded != NULL)
-                                strcpy(folded, casefold_table[mid].data);
-                        *len += utf_byte_length(casefold_table[mid].data);
-                        return true;
-                } else if (mid == begin) {
-                        return false;
-                } else if (c > casefold_table[mid].ch) {
-                        begin = mid;
-                } else {
-                        end = mid;
-                }
-        }
+        if (folded != NULL)
+                strcpy(folded, folded_c);
+
+        *len += utf_byte_length(folded_c);
+
+        return true;
 }
 
 static char *
@@ -1036,24 +1027,15 @@ utf_width_n(const char *str, size_t len)
 bool
 unichar_mirror(unichar c, unichar *mirrored)
 {
-	int begin = 0;
-	int end = lengthof(bidi_mirroring_table);
+        int index;
 
-	while (true) {
-		int mid = (begin + end) / 2;
+        if (!unicode_table_lookup(bidi_mirroring_table, c, &index))
+                return false;
 
-		if (c == bidi_mirroring_table[mid].ch) {
-			if (mirrored != NULL)
-				*mirrored = bidi_mirroring_table[mid].mirrored_ch;
-			return true;
-		} else if (mid == begin) {
-			return false;
-		} else if (c > bidi_mirroring_table[mid].ch) {
-			begin = mid;
-		} else {
-			end = mid;
-		}
-	}
+        if (mirrored != NULL)
+                *mirrored = bidi_mirroring_table[index].mirrored_ch;
+
+        return true;
 }
 
 

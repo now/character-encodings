@@ -179,26 +179,12 @@ get_decomposition(int index, bool compat)
 static const char *
 find_decomposition(unichar c, bool compat)
 {
-        int begin = 0;
-        int end = lengthof(decomp_table);
+        int index;
 
-        if (c < decomp_table[begin].ch || c > decomp_table[end - 1].ch)
+        if (!unicode_table_lookup(decomp_table, c, &index))
                 return NULL;
 
-        while (true) {
-                int middle = (begin + end) / 2;
-
-                if (c == decomp_table[middle].ch)
-                        return get_decomposition(middle, compat);
-                else if (middle == begin)
-                        break;
-                else if (c > decomp_table[middle].ch)
-                        begin = middle;
-                else
-                        end = middle;
-        }
-
-        return NULL;
+        return get_decomposition(index, compat);
 }
 
 

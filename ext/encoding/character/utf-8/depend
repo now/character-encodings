@@ -1,6 +1,7 @@
 break.o: break.c unicode.h data/break.h
 decompose.o: decompose.c unicode.h private.h data/decompose.h \
   data/compose.h
+private.o: private.c private.h
 properties.o: properties.c unicode.h private.h data/character-tables.h
 rb_utf_aref.o: rb_utf_aref.c rb_includes.h unicode.h private.h \
   rb_methods.h
