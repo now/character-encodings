@@ -190,6 +190,9 @@ utf_char(const char *str)
 unichar
 utf_char_n(const char *str, size_t max)
 {
+        if (max == 0)
+                return UTF_INCOMPLETE_INPUT_UNICHAR;
+
 	size_t len;
 	unichar c = (unsigned char)*str;
 
