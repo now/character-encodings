@@ -92,7 +92,7 @@ Spec::Rake::SpecTask.new do |t|
 end
 
 Tests = [
-  ['tests/foldcase.rb'],
+  ['tests/foldcase.rb', 'tests/case.rb'],
   ['tests/normalize.rb']
 ]
 
