@@ -12,6 +12,7 @@ def try_compiler_option(opt, &b)
 end
 
 try_compiler_option('-std=c99')
+try_compiler_option('-finline-functions')
 try_compiler_option('-Wall')
 try_compiler_option('-Wextra')
 try_compiler_option('-Wwrite-strings')
@@ -23,6 +24,7 @@ try_compiler_option('-Wundef')
 try_compiler_option('-Wpointer-arith')
 try_compiler_option('-Wcast-align')
 try_compiler_option('-Werror')
+try_compiler_option('-Winline')
 # XXX: sadly, -Wshadow is a bit too strict.  It will, for example, whine about
 # local variables called “index” on FreeBSD.
 # try_compiler_option('-Wshadow')
