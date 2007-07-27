@@ -585,8 +585,7 @@ real_toupper_lithuanian(const char **p, unichar c, int type, char *buf,
 
 	if (*was_i) {
                 size_t len = remove_all_combining_dot_above(c, buf);
-		return len + output_marks(p, (buf != NULL) ? buf + len : NULL,
-                                          true);
+		return len + output_marks(p, OFFSET_IF(buf, len), true);
 	}
 
 	if (!s_ismark(type))
