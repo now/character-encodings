@@ -364,8 +364,8 @@ special_case_table_lookup(unichar c)
         unichar tv = ATTTABLE(c >> 8, c & 0xff);
 
         if (tv >= UNICODE_SPECIAL_CASE_TABLE_START)
-                return utf_char(special_case_table +
-                                tv - UNICODE_SPECIAL_CASE_TABLE_START);
+                tv = utf_char(special_case_table +
+                              tv - UNICODE_SPECIAL_CASE_TABLE_START);
 
         if (tv == '\0')
                 return c;
@@ -429,7 +429,7 @@ unichar_totitle(unichar c)
 			return title_table[i][0];
 
         if (s_type(c) == UNICODE_LOWERCASE_LETTER)
-                return ATTTABLE(c >> 8, c & 0xff);
+                return unichar_toupper(c);
 
         return c;
 }
