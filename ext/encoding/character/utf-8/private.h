@@ -23,7 +23,7 @@
 
 unichar *_utf_normalize_wc(const char *str, size_t max_len, bool use_len,
                            NormalizeMode mode) HIDDEN;
-inline int _unichar_combining_class(unichar c) HIDDEN;
+int _unichar_combining_class(unichar c) HIDDEN;
 
 void need_at_least_n_arguments(int argc, int n) HIDDEN;
 
