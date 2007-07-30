@@ -115,12 +115,11 @@ unicode_canonical_ordering(unichar *str, size_t len)
 /* {{{1
  * Decompose the character ‘s’ according to the rules outlined in
  * http://www.unicode.org/unicode/reports/tr15/#Hangul.  ‘r’ should be ‹NULL›
- * or of sufficient length to store the decomposition of ‘s’.  The number of
- * characters stored (or would be if it were non-‹NULL›) in ‘r’ is put in
- * ‘r_len’.
+ * or of sufficient length to store the decomposition of ‘s’.  Returns the
+ * number of characters stored (or would be if it were non-NULL) in R.
  */
-static void
-decompose_hangul(unichar s, unichar *r, size_t *r_len)
+static size_t
+decompose_hangul(unichar s, unichar *r)
 {
         int SIndex = s - SBase;
 
@@ -128,8 +127,7 @@ decompose_hangul(unichar s, unichar *r, size_t *r_len)
         if (SIndex < 0 || SIndex >= SCount) {
                 if (r != NULL)
                         r[0] = s;
-                *r_len = 1;
-                return;
+                return 1;
         }
 
         unichar L = LBase + SIndex / NCount;
@@ -144,10 +142,10 @@ decompose_hangul(unichar s, unichar *r, size_t *r_len)
         if (T != TBase) {
                 if (r != NULL)
                         r[2] = T;
-                *r_len = 3;
-        } else {
-                *r_len = 2;
+                return 3;
         }
+
+        return 2;
 }
 
 
@@ -216,9 +214,9 @@ unicode_canonical_decomposition(unichar c, size_t *len)
 
         /* Hangul syllable */
         if (c >= SBase && c <= SLast) {
-                decompose_hangul(c, NULL, len);
+                *len = decompose_hangul(c, NULL);
                 r = ALLOC_N(unichar, *len);
-                decompose_hangul(c, r, len);
+                decompose_hangul(c, r);
         } else if ((decomp = find_decomposition(c, false)) != NULL) {
                 *len = utf_length(decomp);
                 r = ALLOC_N(unichar, *len);
@@ -371,14 +369,10 @@ normalize_wc_decompose(const char *str, size_t max_len, bool use_len,
                 size_t prev_n = n;
 
                 unichar *base = (buf != NULL) ? buf + n : NULL;
-                if (c >= SBase && c <= SLast) {
-                        size_t len;
-
-                        decompose_hangul(c, base, &len);
-                        n += len;
-                } else {
+                if (c >= SBase && c <= SLast)
+                        n += decompose_hangul(c, base);
+                else
                         n += normalize_wc_decompose_one(c, mode, base);
-                }
 
                 if (buf != NULL && n > 0 && COMBINING_CLASS(buf[prev_n]) == 0) {
                         unicode_canonical_ordering(buf + prev_start,
