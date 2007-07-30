@@ -457,7 +457,7 @@ utf_collate(const char *a, const char *b)
 
 	unichar *a_norm = _utf_normalize_wc(a, 0, false, NORMALIZE_ALL_COMPOSE);
 	unichar *b_norm = _utf_normalize_wc(b, 0, false, NORMALIZE_ALL_COMPOSE);
-	setlocale(LC_COLLATE, "");
+
 	int result = wcscoll((wchar_t *)a_norm, (wchar_t *)b_norm);
 
 	free(a_norm);
@@ -521,7 +521,6 @@ utf_collate_key_impl(const char *str, size_t len, bool use_len)
 	assert(str != NULL);
 
 	unichar *str_norm = _utf_normalize_wc(str, len, use_len, NORMALIZE_ALL_COMPOSE);
-	setlocale(LC_COLLATE, "");
 	size_t xfrm_len = wcsxfrm(NULL, (wchar_t *)str_norm, 0);
 	wchar_t result_wc[xfrm_len + 1];
 	wcsxfrm(result_wc, (wchar_t *)str_norm, xfrm_len + 1);
