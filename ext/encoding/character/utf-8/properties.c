@@ -760,9 +760,48 @@ real_do_tolower(unichar c, int type, char *buf)
 
 /* {{{1
  * The real implementation of downcase.
- *
- * TODO: this needs a cleanup.
  */
+static size_t
+tolower_turkic_i(const char **p, char *buf)
+{
+        unichar i = LATIN_SMALL_LETTER_DOTLESS_I;
+
+        if (utf_char(*p) == COMBINING_DOT_ABOVE) {
+                /* TODO: don’t we need to make sure we don’t go beyond the end
+                 * of ‘p’? */
+                *p = utf_next(*p);
+                i = LATIN_SMALL_LETTER_I;
+        } 
+
+        return unichar_to_utf(i, buf);
+}
+
+static size_t
+tolower_lithuianian_i(char *buf, unichar base, unichar combiner)
+{
+        size_t len = unichar_to_utf(base, buf);
+        len += unichar_to_utf(COMBINING_DOT_ABOVE, OFFSET_IF(buf, len));
+        if (combiner != '\0')
+                len += unichar_to_utf(combiner, OFFSET_IF(buf, len));
+
+        return len;
+}
+
+static size_t
+tolower_sigma(const char **p, char *buf, const char *end, bool use_end)
+{
+        unichar sigma = GREEK_SMALL_LETTER_FINAL_SIGMA;
+
+        /* SIGMA maps differently depending on whether it is final or not.  The
+         * following simplified test would fail in the case of combining marks
+         * following the sigma, but I don't think that occurs in real text.
+         * The test here matches that in ICU. */
+        if ((!use_end || *p < end) && **p != '\0' && s_isalpha(s_type(utf_char(*p))))
+                sigma = GREEK_SMALL_LETTER_SIGMA;
+
+        return unichar_to_utf(sigma, buf);
+}
+
 static size_t
 real_tolower_one(const char **p, const char *prev, char *buf,
                  LocaleType locale_type, const char *end, bool use_end)
@@ -770,70 +809,45 @@ real_tolower_one(const char **p, const char *prev, char *buf,
         unichar c = utf_char(prev);
         int type = s_type(c);
 
-        if (locale_type == LOCALE_TURKIC && c == 'I') {
-                if (utf_char(*p) == COMBINING_DOT_ABOVE) {
-                        /* TODO: don’t we need to make sure we don’t go beyond the end
-                         * of ‘p’? */
-                        *p = utf_next(*p);
-                        return unichar_to_utf(LATIN_SMALL_LETTER_I, buf);
-                } 
+        if (locale_type == LOCALE_TURKIC && c == 'I')
+                return tolower_turkic_i(p, buf);
 
-                return unichar_to_utf(LATIN_SMALL_LETTER_DOTLESS_I, buf);
-        }
+        /* Introduce an explicit dot above the lowercasing capital I’s
+         * and J’s whenever there are more accents above.
+         * [SpecialCasing.txt] */
+        if (locale_type == LOCALE_LITHUANIAN) {
+                unichar base = LATIN_SMALL_LETTER_I;
+                unichar combiner = '\0';
 
-        if (locale_type == LOCALE_LITHUANIAN &&
-            (c == LATIN_CAPITAL_LETTER_I_WITH_GRAVE ||
-             c == LATIN_CAPITAL_LETTER_I_WITH_ACUTE ||
-             c == LATIN_CAPITAL_LETTER_I_WITH_TILDE)) {
-                /* Introduce an explicit dot above the lowercasing capital I's
-                 * and J's whenever there are more accents above.
-                 * [SpecialCasing.txt] */
-                size_t len = unichar_to_utf(LATIN_SMALL_LETTER_I, buf);
-                len += unichar_to_utf(COMBINING_DOT_ABOVE, OFFSET_IF(buf, len));
                 switch (c) {
                 case LATIN_CAPITAL_LETTER_I_WITH_GRAVE:
-                        len += unichar_to_utf(COMBINING_GRAVE_ACCENT,
-                                              OFFSET_IF(buf, len));
+                        combiner = COMBINING_GRAVE_ACCENT;
                         break;
                 case LATIN_CAPITAL_LETTER_I_WITH_ACUTE:
-                        len += unichar_to_utf(COMBINING_ACUTE_ACCENT,
-                                              OFFSET_IF(buf, len));
+                        combiner = COMBINING_ACUTE_ACCENT;
                         break;
                 case LATIN_CAPITAL_LETTER_I_WITH_TILDE:
-                        len += unichar_to_utf(COMBINING_TILDE,
-                                              OFFSET_IF(buf, len));
+                        combiner = COMBINING_TILDE;
                         break;
+                case 'I':
+                case 'J':
+                case LATIN_CAPITAL_LETTER_I_WITH_OGONEK:
+                        if (!has_more_above(*p))
+                                goto no_lithuanian_i_casing;
+
+                        base = unichar_tolower(c);
+                        break;
+                default:
+                        goto no_lithuanian_i_casing;
                 }
 
-                return len;
+                return tolower_lithuianian_i(buf, base, combiner);
         }
 
-        if (locale_type == LOCALE_LITHUANIAN &&
-            (c == 'I' || c == 'J' || c == LATIN_CAPITAL_LETTER_I_WITH_OGONEK) &&
-            has_more_above(*p)) {
-                size_t len = unichar_to_utf(unichar_tolower(c), buf);
-                return len + unichar_to_utf(COMBINING_DOT_ABOVE,
-                                            OFFSET_IF(buf, len));
-        }
+no_lithuanian_i_casing:
 
-        if (c == GREEK_CAPITAL_LETTER_SIGMA) {
-                unichar tv = GREEK_SMALL_LETTER_FINAL_SIGMA;
-
-                if ((!use_end || *p < end) && **p != '\0') {
-                        unichar next_c = utf_char(*p);
-                        int next_type = s_type(next_c);
-
-                        /* SIGMA maps differently depending on whether it is
-                         * final or not.  The following simplified test would
-                         * fail in the case of combining marks following the
-                         * sigma, but I don't think that occurs in real text.
-                         * The test here matches that in ICU. */
-                        if (s_isalpha(next_type))
-                                tv = GREEK_SMALL_LETTER_SIGMA;
-                }
-
-                return unichar_to_utf(tv, buf);
-        }
+        if (c == GREEK_CAPITAL_LETTER_SIGMA)
+                return tolower_sigma(p, buf, end, use_end); 
         
         if (IS(type, OR(UNICODE_UPPERCASE_LETTER,
                         OR(UNICODE_TITLECASE_LETTER, 0))))
@@ -878,7 +892,7 @@ utf_downcase_impl(const char *str, size_t max, bool use_max)
 	size_t len = real_tolower(str, max, use_max, NULL, locale_type);
 	char *result = ALLOC_N(char, len + 1);
 	real_tolower(str, max, use_max, result, locale_type);
-	result[len] = NUL;
+	result[len] = '\0';
 
 	return result;
 }
