@@ -85,7 +85,6 @@ _utf_offset_to_pointer_validated_impl(const char *str, long offset,
                                                 saved_offset);
                                 else
                                         return NULL;
-                                                break;
                         }
          
                         offset += utf_pointer_to_offset(p, base);
