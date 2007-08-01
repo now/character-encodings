@@ -264,12 +264,12 @@ static bool
 lookup_compose(const uint16_t table[][2], uint16_t index, unichar c,
                unichar *result)
 {
-        if (c == table[index][0]) {
-                *result = table[index][1];
-                return true;
-        }
+        if (c != table[index][0])
+                return false;
 
-        return false;
+        *result = table[index][1];
+
+        return true;
 }
 
 static bool
