@@ -8,10 +8,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+
 #include "unicode.h"
-#include "private.h"
+
 #include "data/decompose.h"
 #include "data/compose.h"
+
+#include "private.h"
+
+#define COMBINING_CLASS(c)      \
+        SPLIT_UNICODE_TABLE_LOOKUP(cclass_data, combining_class_table_part1, combining_class_table_part2, (c), 0)
 
 
 /* {{{1
@@ -21,22 +27,6 @@
  * TODO: Turn these macros into full-fledged functions, as this is rather silly
  * when we have ‹inline› in C99.
  */
-#define CC_PART1(page, char) \
-        ((combining_class_table_part1[page] >= UNICODE_MAX_TABLE_INDEX) \
-         ? (combining_class_table_part1[page] - UNICODE_MAX_TABLE_INDEX) \
-         : (cclass_data[combining_class_table_part1[page]][char]))
-
-#define CC_PART2(page, char) \
-        ((combining_class_table_part2[page] >= UNICODE_MAX_TABLE_INDEX) \
-         ? (combining_class_table_part2[page] - UNICODE_MAX_TABLE_INDEX) \
-         : (cclass_data[combining_class_table_part2[page]][char]))
-
-#define COMBINING_CLASS(char) \
-        (((char) <= UNICODE_LAST_CHAR_PART1) \
-         ? CC_PART1((char) >> 8, (char) & 0xff) \
-         : (((char) >= 0xe0000 && (char) <= UNICODE_LAST_CHAR) \
-            ? CC_PART2(((char) - 0xe0000) >> 8, (char) & 0xff) \
-            : 0))
 
 
 /* {{{1

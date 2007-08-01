@@ -13,6 +13,7 @@
 #include <limits.h>
 #include "unicode.h"
 #include "private.h"
+#include "rb_private.h"
 #include "rb_methods.h"
 
 static VALUE mUTF8Methods;
