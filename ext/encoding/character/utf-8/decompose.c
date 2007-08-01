@@ -279,21 +279,18 @@ combine(unichar a, unichar b, unichar *result)
                 return true;
 
         uint16_t index_a = compose_index(a);
-        if (index_a >= COMPOSE_FIRST_SINGLE_START &&
-            index_a < COMPOSE_SECOND_START) {
+        if (index_a >= COMPOSE_FIRST_SINGLE_START && index_a < COMPOSE_SECOND_START)
                 return lookup_compose(compose_first_single,
                                       index_a - COMPOSE_FIRST_SINGLE_START,
                                       b,
                                       result);
-        }
 
         uint16_t index_b = compose_index(b);
-        if (index_b >= COMPOSE_SECOND_SINGLE_START) {
+        if (index_b >= COMPOSE_SECOND_SINGLE_START)
                 return lookup_compose(compose_second_single,
                                       index_b - COMPOSE_SECOND_SINGLE_START,
                                       a,
                                       result);
-        }
 
         if (index_a >= COMPOSE_FIRST_START &&
             index_a < COMPOSE_FIRST_SINGLE_START &&
