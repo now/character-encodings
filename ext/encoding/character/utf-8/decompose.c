@@ -257,11 +257,7 @@ compose_index(unichar c)
         if (page > COMPOSE_TABLE_LAST)
                 return 0;
 
-        /* TODO: why is this signed, exactly? */
-        int16_t compose_offset = compose_table[page];
-        return (compose_offset >= UNICODE_MAX_TABLE_INDEX) ?
-                compose_offset - UNICODE_MAX_TABLE_INDEX :
-                compose_data[compose_offset][c & 0xff];
+        return SPLIT_UNICODE_TABLE_LOOKUP_PAGE(compose_data, compose_table, page, c);
 }
 
 static bool
