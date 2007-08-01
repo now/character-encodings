@@ -120,13 +120,13 @@ decompose_hangul(unichar s, unichar *r)
                 r[1] = V;
         }
 
-        if (T != TBase) {
-                if (r != NULL)
-                        r[2] = T;
-                return 3;
-        }
+        if (T == TBase)
+                return 2;
 
-        return 2;
+        if (r != NULL)
+                r[2] = T;
+
+        return 3;
 }
 
 
