@@ -21,15 +21,6 @@
 
 
 /* {{{1
- * Macros for accessing the combining class property tables for a given
- * character.
- *
- * TODO: Turn these macros into full-fledged functions, as this is rather silly
- * when we have ‹inline› in C99.
- */
-
-
-/* {{{1
  * Hangul syllable [de]composition constants. A lot of work I'd say.
  */
 enum {
