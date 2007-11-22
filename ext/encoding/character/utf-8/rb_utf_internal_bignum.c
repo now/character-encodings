@@ -270,7 +270,7 @@ rb_cutf_to_inum(const char * const str, int base, bool verify)
 
                 bool more_to_shift = true;
                 while (more_to_shift) {
-                        BDIGIT_DBL num = c;
+                        BDIGIT_DBL num = digit_value;
 
                         for (int i = 0; i < big_len; i++) {
                                 num += (BDIGIT_DBL)zds[i] * base;
