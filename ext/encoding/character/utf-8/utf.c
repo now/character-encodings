@@ -865,7 +865,7 @@ utf_reverse_impl(const char *str, size_t len, bool use_len)
 	char *result = ALLOC_N(char, len + 1);
 	char *r = result + len;
 	const char *p = str;
-	while (*p != NUL) {
+        while (r > result) {
 		uint8_t skip = s_utf_skip_lengths[*(unsigned char *)p];
 		r -= skip;
 		for (char *m = r; skip > 0; skip--)
