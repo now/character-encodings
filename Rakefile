@@ -10,7 +10,7 @@ require 'rake/testtask'
 require 'spec/rake/spectask'
 
 PackageName = 'character-encodings'
-PackageVersion = '0.2.0'
+PackageVersion = '0.3.0'
 
 desc 'Default task'
 task :default => [:extensions]
