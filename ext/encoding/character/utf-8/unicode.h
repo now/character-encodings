@@ -8,6 +8,12 @@
 #ifndef UNICODE_H
 #define UNICODE_H
 
+#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+#define CONST_FUNC                              \
+          __attribute__((__const__))
+#else
+#define CONST_FUNC
+#endif
 
 typedef uint32_t unichar;
 
@@ -83,6 +89,8 @@ int unichar_digit_value(unichar c);
 int unichar_xdigit_value(unichar c);
 
 UnicodeType unichar_type(unichar c);
+
+int unichar_combining_class(unichar c) CONST_FUNC;
 
 bool unichar_mirror(unichar c, unichar *mirrored);
 

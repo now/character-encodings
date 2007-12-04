@@ -40,8 +40,8 @@ enum {
 /* {{{1
  * Return the combinging class of ‘c’.
  */
-inline int
-_unichar_combining_class(unichar c)
+int
+unichar_combining_class(unichar c)
 {
         return COMBINING_CLASS(c);
 }

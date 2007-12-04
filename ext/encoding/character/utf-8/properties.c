@@ -727,7 +727,7 @@ static bool
 has_more_above(const char *str)
 {
 	for (const char *p = str; *p != '\0'; p = utf_next(p)) {
-		int c_class = _unichar_combining_class(utf_char(p));
+		int c_class = unichar_combining_class(utf_char(p));
 
 		if (c_class == 230)
 			return true;

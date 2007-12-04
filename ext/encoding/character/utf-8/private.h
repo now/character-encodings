@@ -43,6 +43,5 @@ bool binary_search_unicode_table(const void *table, size_t n, size_t sizeof_entr
 
 unichar *_utf_normalize_wc(const char *str, size_t max_len, bool use_len,
                            NormalizeMode mode) HIDDEN;
-int _unichar_combining_class(unichar c) HIDDEN;
 
 #endif /* PRIVATE_H */
