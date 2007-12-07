@@ -18,7 +18,7 @@
 #else
 #  define UNUSED(u)   \
         u
-#  define HIDDEN(u)
+#  define HIDDEN
 #endif
 
 #define binary_search_middle_of(begin, end)     \
