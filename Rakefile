@@ -26,7 +26,7 @@ Makefile = 'Makefile'
 ExtConf = 'extconf.rb'
 Depend = 'depend'
 TAGS = 'TAGS'
-CTags = 'exuberant-ctags'
+CTags = 'ctags'
 
 desc 'Build all C-based extensions'
 task :extensions
@@ -153,5 +153,5 @@ task :uninstall => [] do
   sh %{gem uninstall #{PackageName}}
 end
 
-CLEAN.include ["ext/**/{*.{o,so},#{TAGS}}"]
+CLEAN.include ["ext/**/{*.{o,so,#{Config::CONFIG['DLEXT']}},#{TAGS}}"]
 CLOBBER.include ["ext/**/#{Makefile}"]
