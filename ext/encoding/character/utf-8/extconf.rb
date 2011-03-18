@@ -46,6 +46,20 @@ try_compiler_option '-Wundef'
 try_compiler_option '-Wunsafe-loop-optimizations'
 try_compiler_option '-Wwrite-strings'
 
+checking_for 'GNUC visibility attribute' do
+  $defs.push('-DHAVE_GNUC_VISIBILITY') if try_compile <<EOC, '-Werror'
+void __attribute__((visibility("hidden")))
+f_hidden(void)
+{
+}
+int main(int argc, char **argv)
+{
+  f_hidden();
+  return 0;
+}
+EOC
+end
+
 have_header 'assert.h'
 have_header 'limits.h'
 have_header 'locale.h'

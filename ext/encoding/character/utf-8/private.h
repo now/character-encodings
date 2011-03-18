@@ -10,15 +10,19 @@
 #define NUL '\0'
 #define lengthof(ary)   (sizeof(ary) / sizeof((ary)[0]))
 
-#if defined(__GNUC__)
-#  define UNUSED(u)   \
-        u __attribute__((__unused__))
+#if defined(HAVE_GNUC_VISIBILITY)
 #  define HIDDEN   \
         __attribute__((visibility("hidden")))
 #else
+#  define HIDDEN
+#endif
+
+#if defined(__GNUC__)
+#  define UNUSED(u)   \
+        u __attribute__((__unused__))
+#else
 #  define UNUSED(u)   \
         u
-#  define HIDDEN
 #endif
 
 #define binary_search_middle_of(begin, end)     \
